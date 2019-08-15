@@ -1,0 +1,27 @@
+import { Message, Client, MessageEmbed } from "discord.js";
+import { IBot } from "../../api";
+
+export default class example implements IBot {
+
+      private readonly _command = "example";
+
+      help(): string { 
+            return "Example";
+      }
+
+      isThisCommand(command: string): boolean { 
+            return command === this._command;
+      }
+
+      usage(): string { 
+            return "!example";
+      }
+
+      admin_only(): boolean { 
+            return true;
+      }
+
+      async runCommand(args: string[], message: Message, client: Client) {
+            
+      }
+}

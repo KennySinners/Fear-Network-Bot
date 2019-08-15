@@ -1,0 +1,7 @@
+src/bot/javascript/
+src/bot/typescript/conf.ts
+src/bot/typescript/$stuff/functions/connect.ts
+.vscode
+.vs
+.idea
+node_modules/

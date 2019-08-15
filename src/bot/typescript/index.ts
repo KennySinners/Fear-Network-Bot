@@ -1,0 +1,1 @@
+import { Run } from "./$stuff/functions/onelineindex"; Run();
