@@ -18,27 +18,44 @@ export default class rep implements IBot {
             return "'!rep give': !rep give {@user/user_id} {reason} \n'!rep': !rep {@user/user_id}";
       }
 
-      admin_only(): boolean {
-            return false && true;
+      adminOnly(): boolean {
+            return true;
       }
 
       async runCommand(args: string[], message: Message, client: Client) {
 
-            const member = message.mentions.members.first() || await message.guild.members.fetch(args[0]);
-            const reason = args.slice(2).join(" ");
+            const member = message.mentions.members.first()
+            const reason = args.slice(2).join(" ") || "No reason specified";
             const reputationEmbed = new MessageEmbed().setFooter(client.user.tag, client.user.displayAvatarURL());
             const reputationGiveEmbed = new MessageEmbed().setFooter(client.user.tag, client.user.displayAvatarURL());
 
-            if(!message.mentions.members.first() || !(await message.guild.members.fetch(args[0]))) { 
+            if (!member) {
                   message.reply(`please mention a member`)
             }
-            
+
             Rep.findOne({
                   guildID: message.guild.id,
                   user: member.id
             }, async (err, rep) => {
-                  if (args[1].toLowerCase() === "give") {
-                        if (err) return console.log(err);
+                  if (err) return console.log(err);
+
+                  if (message.content.split(" ")[1].toLowerCase() !== "give" && member) {
+
+                        await reputationEmbed
+                              .setTitle(`${member.displayName}'s reputations`)
+                              .setAuthor(member.user.tag, member.user.displayAvatarURL())
+                              .addField(`Reputations`, rep.reps > 0 ? rep.reps : "None")
+
+                        for (let i = 0; i < rep.repdby.length; i++) {
+                              reputationEmbed
+                                    .addField(`Reputation issued by ${rep.repdby[i]}`, `Reason: **\`\`${rep.reasons[i]}\`\`** `)
+                        }
+
+                        message.channel.send(reputationEmbed);
+                  } else {
+                        reputationGiveEmbed
+                              .setTitle(`${message.member.displayName} just gave ${member.displayName} a reputation point!`)
+                              .addField("Reason", reason)
 
                         if (!rep) {
                               return new Rep({
@@ -48,28 +65,22 @@ export default class rep implements IBot {
                                     reasons: [reason],
                                     repdby: [message.author.tag]
                               }).save()
-                              .then(() => message.channel.send(reputationGiveEmbed))
-                              .catch(e => console.log(e));
+                                    .then(() => {
+                                          reputationGiveEmbed.addField("How many reputations points " + member.displayName + " has now", rep.reps);
+                                          message.channel.send(reputationGiveEmbed)
+                                    })
+                                    .catch(e => console.log(e));
                         } else {
                               rep.reps += 1;
                               rep.reasons.push(reason);
                               rep.repdby.push(message.author.tag);
                               return rep.save()
-                              .then(() => message.channel.send(reputationGiveEmbed))
-                              .catch(e => console.log(e));
+                                    .then(() => {
+                                          reputationGiveEmbed.addField("How many reputations points " + member.displayName + " has now", rep.reps);
+                                          message.channel.send(reputationGiveEmbed)
+                                    })
+                                    .catch(e => console.log(e));
                         }
-                  } else {
-                        await reputationEmbed
-                        .setTitle(`${member.displayName}'s reputations`)
-                        .setAuthor(member.user.tag, member.user.displayAvatarURL())
-                        .addField(`Reputations`, rep.reps)
-
-                        for (let i = 0; i < rep.repdby.length; i++) { 
-                              reputationEmbed
-                              .addField(`Reputation issued by ${rep.repdby[i]}`, `Reason: **\`\`${rep.reasons[i]}\`\`** `)
-                        }
-
-                        message.channel.send(reputationEmbed);
                   }
             })
       }

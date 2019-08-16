@@ -19,14 +19,14 @@ export default class warn implements IBot {
             return "!warn {@user/user_id} {reason}"
       }
 
-      admin_only(): boolean {
+      adminOnly(): boolean {
             return true
       }
 
       async runCommand(args: string[], message: Message, client: Client) {
 
             const member = message.mentions.members.first() || await message.guild.members.fetch(args[0]);
-            const reason = args.slice(1).join(" ") || "No reason specified";
+            const reason = !(args.slice(1).join(" ").length <= 0) ? args.slice(1).join(" ") : "No reason specified";
             const warnEmbed = new MessageEmbed().setFooter(message.guild.me.displayName, client.user.displayAvatarURL()).setTimestamp();
 
             if (!message.member.permissions.has("ADMINISTRATOR")) {
@@ -34,9 +34,13 @@ export default class warn implements IBot {
                   return;
             }
 
-            if (!member) {
-                  message.reply(`please mention a member or provide a member id to give a reputation point to`);
+            if (!message.mentions.members.first()) {
+                  message.reply(`please mention a member or provide a member id to warn`);
                   return;
+            }
+
+            if(message.mentions.members.first().id === (client.user.id || message.member.id)) {
+                  message.mentions.members.first().id === client.user.id ? message.reply(`you can't warn the bot`) : message.reply(`you can't warn yourself`)
             }
 
             if (!isNaN(parseInt(args[0])) && !message.guild.members.fetch(args[0])) {
@@ -51,15 +55,15 @@ export default class warn implements IBot {
                   .addField(`Reason for warning`, reason)
 
             Warn.findOne({
-                  guild: message.guild.id,
-                  user: member.id
-            }, (err, warn) => {
+                  guildID: message.guild.id,
+                  user: message.mentions.members.first().id || (await message.guild.members.fetch(args[0])).id
+            }, async (err, warn) => {
                   if (err) return console.log(err);
 
                   if (!warn) {
-                        new Warn({
+                        return new Warn({
                               guildID: message.guild.id,
-                              user: member.id,
+                              user: message.mentions.members.first().id || (await message.guild.members.fetch(args[0])).id,
                               warns: 1,
                               reasons: [reason],
                               warnedby: [message.author.tag]

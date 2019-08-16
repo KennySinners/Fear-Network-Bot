@@ -17,7 +17,7 @@ export default class send implements IBot {
             return "!send {color-hex} {text-content}";
       }
 
-      admin_only(): boolean {
+      adminOnly(): boolean {
             return false;
       }
 

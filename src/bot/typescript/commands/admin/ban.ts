@@ -17,7 +17,7 @@ export default class ban implements IBot {
             return "!ban {@user/user_id} {reason}"
       }
 
-      admin_only(): boolean {
+      adminOnly(): boolean {
             return true
       }
 

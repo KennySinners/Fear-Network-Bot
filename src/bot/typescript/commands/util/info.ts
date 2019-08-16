@@ -17,13 +17,13 @@ export default class info implements IBot {
             return "!info {@member/member_id}";
       }
 
-      admin_only(): boolean { 
+      adminOnly(): boolean { 
             return false;
       }
 
       async runCommand(args: string[], message: Message, client: Client) {
 
-            const user = message.mentions.users.first() || await client.users.fetch(args[0]) || message.author;
+            const user = message.mentions.users.first() || message.author || await client.users.fetch(args[0]);
             let status = {
                   "dnd": "Do not Disturb",
                   "idle": "Idle",

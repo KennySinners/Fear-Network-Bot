@@ -5,6 +5,6 @@ export interface IBot {
       help(): string;
       isThisCommand(command: string): boolean;
       usage(): string;
-      admin_only(): boolean;
+      adminOnly(): boolean;
       runCommand(args: string[], message: Message, client: Client): Promise<void>;
 }

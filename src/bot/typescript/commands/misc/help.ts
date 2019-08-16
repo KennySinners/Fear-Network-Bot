@@ -18,7 +18,7 @@ export default class help implements IBot {
             return "!help";
       }
 
-      admin_only(): boolean { 
+      adminOnly(): boolean { 
             return false;
       }
 
@@ -33,7 +33,7 @@ export default class help implements IBot {
             for (let i = 0; i < cmds.commands.length; i++) { 
                   helpEmbed.addField(
                         cmds.commands[i]._command.split("")[0].toUpperCase() + cmds.commands[i]._command.slice(1),
-                        cmds.commands[i].help() + ` | Usage: \`\`${cmds.commands[i].usage()}\`\` (Admin only? ${cmds.commands[i].admin_only() === false ? "No" : "Yes"}) `
+                        cmds.commands[i].help() + ` | Usage: \`\`${cmds.commands[i].usage()}\`\` (Admin only? ${cmds.commands[i].adminOnly() === false ? "No" : "Yes"}) `
                   );
             };
 

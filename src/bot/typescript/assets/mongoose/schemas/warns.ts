@@ -11,7 +11,7 @@ export interface WarnModel extends Document {
 const Warn: Schema = new Schema({
       guildID: String,
       user: String,
-      reason: Array,
+      reasons: Array,
       warns: Number,
       warnedby: Array
 });

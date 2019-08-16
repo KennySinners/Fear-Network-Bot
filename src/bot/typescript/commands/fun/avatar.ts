@@ -17,19 +17,19 @@ export default class avatar implements IBot {
             return "!avatar {@user/user_id} or message author by default";
       }
 
-      admin_only(): boolean {
+      adminOnly(): boolean {
             return false;
       }
 
       async runCommand(args: string[], message: Message, client: Client) {
 
-            const user = (message.mentions.users.first() || await client.users.fetch(args[0])) || message.author;
+            const user = message.mentions.users.first() || await client.users.fetch(args[0]);
             const avatarEmbed = new MessageEmbed();
 
             await avatarEmbed
                   .setTitle(`${client.user.username} avatar showcase`)
-                  .setAuthor(`*${user.tag}'s* avatar`)
-                  .setImage(user.displayAvatarURL())
+                  .setAuthor(`*${user.tag || message.author.tag}'s* avatar`)
+                  .setImage(user.displayAvatarURL() || message.author.displayAvatarURL())
                   .setFooter(client.user.tag, client.user.displayAvatarURL())
                   .setTimestamp()
 
